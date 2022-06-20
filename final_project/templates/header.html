@@ -1,0 +1,79 @@
+{% load static %}
+<header class="blog-header lh-1 py-3">
+  <div class="row flex-nowrap justify-content-between align-items-center">
+    <div class="col-4 pt-1">
+      <div class="dropdown">
+        <button class="btn"
+                type="button"
+                id="dropdownMenu2"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <img alt="" width=18px height=18px src="{% static 'img/menu.png' %}"/>
+                
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <li><a class="dropdown-item">카테고리</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <button class="dropdown-item" type="button">
+              <a class="p-2 link-secondary" href="{% url 'shopping:category' '상의' %}">상의</a>
+            </button>
+          </li>
+          <li>
+            <button class="dropdown-item" type="button">
+              <a class="p-2 link-secondary" href="{% url 'shopping:category' '하의' %}">하의</a>
+            </button>
+          </li>
+          <li>
+            <button class="dropdown-item" type="button">
+              <a class="p-2 link-secondary" href="{% url 'shopping:category' '신발' %}">신발</a>
+            </button>
+          </li>
+          <li>
+            <button class="dropdown-item" type="button">
+              <a class="p-2 link-secondary"
+                 href="{% url 'shopping:category' '악세서리' %}">악세서리</a>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-4 text-center">
+      <a class="blog-header-logo text-dark" href="{% url 'shopping:index' %}">OnShop</a>
+    </div>
+    <div class="col-4 d-flex justify-content-end align-items-center">
+      {% comment %} <a class="link-secondary" href="#" aria-label="Search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
+      </a> {% endcomment %}
+      {% if request.user.is_authenticated %}
+        <a class="btn btn-sm" href="{% url 'accounts:logout' %}">Logout</a>&nbsp;
+        <a class="btn btn-sm "
+           href="{% url 'accounts:profile' request.user.username %}">
+          <img width=25px height=25px src="{% static 'img/profile.png' %}"/>
+          </a>
+          
+        <a class="btn btn-sm" href="{% url 'shopping:cart' %}">
+          <img width=25px height:25px src="{% static 'img/shopping-cart.png' %}" />
+        </a>
+      {% else %}
+        <a class="btn btn-sm"
+           href="{% url 'accounts:login' %}">Login</a>&nbsp;
+        <a class="btn btn-sm"
+           href="{% url 'accounts:signup' %}">Sign up</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<style>
+  header a{
+    text-decoration: none;
+    border: none;
+  }
+  header a:hover, header a:link, header a:visited{
+    border: none;
+  }
+  header button:hover, header button:active, header button:focus{
+    border: none;
+  }
+</style>

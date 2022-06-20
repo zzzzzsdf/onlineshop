@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h5 class="text-center mt-4">장바구니</h5>
+<hr class="border border-warning bg-warning">
+<table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th scope="col"><input id="all_check" onclick="selectAll(this)" type="checkbox"></th>
+        <th scope="col">상품정보</th>
+        <th scope="col">가격</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+    {% if products %}
+    {% for product in products %}
+      <tr>
+        <th scope="row">
+            <input type="hidden" value="{{ product.pk }}" />
+            <input onclick="selectOne(this)" name="{{ product.price }}" class="product_check" type="checkbox" />
+        </th>
+        <td>
+            <img src ="/media/{{ product.product_image }}" style="float: left; margin-right: 10px; width:50px; height:50px;" />
+            <a href="{% url 'shopping:detail' product.pk %}">{{ product.name }}<a>
+        </td>
+        
+        <td style="position: relative;">
+            <div style="font-weight: 700; color: #AE0000;">
+                <span  class="product_price">{{ product.price|intcomma }}</span>원
+            </div>
+            <div class="delete_button">
+            <a href="{% url 'shopping:delete_from_cart' product.pk %}"><button type="button">x</button></a>
+            </div>
+        </td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+  <div style="text-align: right; margin-bottom: 20px; padding-right: 20px;font-weight: 700;">
+    총 주문 금액 : <span id="sum_price" style=" color: #AE0000;">0원</span>
+  </div>
+  <div style="text-align: center;">
+    <a href="{% url 'shopping:index' %}">
+        <button type="button" class="btn btn-sm btn-outline-secondary">계속 쇼핑하기</button>
+    </a>
+  <a href="#">
+    <button onclick="purchase()" type="button" class="btn btn-sm btn-outline-secondary">구매하기</button>
+  </a>
+  <div>
+<style>
+    button{
+        padding: 10px 20px;
+        width: 120px;
+        height: 40px;
+        background-color: #fff;
+        border: 1px solid #DBDBDB;
+        border-radius: 3px;
+    }
+    .delete_button button{
+        padding: 0;
+        position: absolute; top:40%; right: 10px;
+        border: 1px solid #DBDBDB;
+        width: 15px; height: 15px;
+        font-size: 10px;
+        text-align: center;
+        line-height: 1;
+    }
+ 
+</style>
+<script>
+    var products = []
+    function selectAll(target){
+        var prices = document.querySelectorAll('.product_price');
+        var checkboxes = document.querySelectorAll('.product_check');
+        var sum = 0;
+        if (target.checked){
+            for (var i=0; i<prices.length; i++){
+                var num = Number(checkboxes[i].previousElementSibling.value)
+                products.push(num)
+                checkboxes[i].checked = true;
+                sum += Number(prices[i].innerText);
+            }
+            
+        } else {
+            for (var i=0; i<prices.length; i++){
+                checkboxes[i].checked = false;
+            }
+            products = []
+        }
+        console.log(products)
+        document.querySelector('#sum_price').innerText = sum + '원'
+
+    }
+
+    function selectOne(target){
+        checkCheckbox()
+        var sum = Number(document.querySelector('#sum_price').innerText.slice(0, -1));
+        var num = Number(target.previousElementSibling.value)
+        if (target.checked){
+            products.push(num)
+            sum += Number(target.name)
+        } else {
+            const idx = products.indexOf(num)
+            if (idx > -1) products.splice(idx, 1)
+            sum -= Number(target.name)
+        }
+        console.log(products)
+        document.querySelector('#sum_price').innerText = sum + '원'
+    }
+
+    function checkCheckbox(){
+        var all_checkbox = document.querySelector('#all_check');
+        var checkboxes = document.querySelectorAll('.product_check');
+        for (var i=0; i<checkboxes.length; i++){
+            if (!checkboxes[i].checked){
+                all_checkbox.checked = false;
+                break;
+            } 
+        }
+        if (i == checkboxes.length) {
+            all_checkbox.checked = true;
+        }
+    }
+    
+    function purchase(){
+        axios({
+            method: 'post',
+            url: '/shopping/cart_purchase/',
+            data: {
+                products: products
+            },
+        })
+        .then((res) => {
+            location.href="/shopping/"
+        })
+        .catch((e) => {
+            console.log(e)
+        })
+    }
+</script>
+    
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if request.resolver_match.url_name == 'create' %}
+        <h5 class="text-center mt-4">제품 판매</h5>
+        {% else %}
+        <h5 class="text-center mt-4">제품 수정</h5>
+    {% endif %}
+    <hr class="border border-warning bg-warning">
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group mb-3">
+                {{ field.label }}
+                {{ field }}
+                {% for fieldname, error in form.errors.items %}
+                {% if fieldname == field.name %}
+                <div class="alert-message" role="alert">{{ error|striptags }}</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    <br>
+        <button class="btn btn-warning">작성 완료</button>
+        
+    </form>
+<style>
+    .alert-message{
+        padding-left: 5px;
+        color: red; 
+        font-size: 10px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+
+<div class="row featurette">
+    <div class="col-md-5 order-md-1">
+        <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
+                width="500px"
+                style="min-height: 400px"
+                src="/media/{{ product.product_image }}"/>
+    </div>
+    <div class="col-md-7 order-md-2" style="position: relative;">
+        <p style="height:30px;" class="featurette-heading  mt-3 lh-1">
+            <span class="lh-1" style="font-size: 22px; font-weight: bold;">[{{ product.category }}] {{ product.name }}</span>
+            <small style="float:right; height:30px; line-height:30px; padding-right: 20px;">
+                <a href="{% url 'accounts:profile' product.user.username %}">판매자: {{ product.user }}</a>
+            </small>
+        </p>
+        <br />
+        <p>
+            <span style="font-size: 20px; font-weight: 700; color: #AE0000;">{{ product.price|intcomma }}원</span>
+            <small style="float:right; height:30px; line-height:30px; padding-right: 20px;">올린날짜: {{ product.create_date|date:"Y.m.d" }}</small>
+            
+        </p>
+        <hr>
+        <p>제품 설명</p>
+        <pre class="lead">
+{{ product.description }}
+        </pre>
+        <div class="purchase-button">
+            {% if product.is_sold %}
+                <a>
+                    <button style="width:100%">판매 완료</button>
+                </a>
+            {% else %}
+                {% if product.user == request.user %}
+                    <a href="{% url 'shopping:update' product.pk %}">
+                        <button style="background-color: #b3e8bc;">제품 수정</button>
+                    </a>
+                    <a href="{% url 'shopping:delete' product.pk %}">
+                        <button style="background-color: #f2c2c2;">제품 삭제</button>
+                    </a>
+                {% else %}
+                    <a href="{% url 'shopping:add_to_cart' product.pk %}">
+                        <button>장바구니에 담기</button>
+                    </a>
+                    <a href="{% url 'shopping:purchase' product.pk %}">
+                        <button style="background-color: #b3e8bc;">바로 구매</button>
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.lead {
+    margin-bottom: 70px;
+    word-break: break-all;
+}
+.purchase-button{
+    
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+}
+.purchase-button button{
+    height: 50px;
+    border: 1px solid #DBDBDB;
+    width: 49%;
+    border-radius: 3px;
+}
+</style>
+
+{% endblock %}

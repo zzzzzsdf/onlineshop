@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+    <main class="form-signin w-100 mx-auto">
+        {% if request.resolver_match.url_name == 'signup' %}
+            <h2 class="text-center pb-3">회원 가입</h2>
+        {% else %}
+            <h2 class="text-center pb-3">로그인</h2>
+        {% endif %}
+        <div class="form-floating">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <input type="{{ field.field.widget.input_type }}"
+                               class="form-control"
+                               id="{{ field.id_for_label }}"
+                               placeholder="{{ field.label }}"
+                               name="{{ field.name }}">
+                    </div>
+                {% for fieldname, error in form.errors.items %}
+                    {% if fieldname == field.name %}
+                    <div class="alert-message" role="alert">{{ error|striptags }}</div>
+                    {% endif %}
+                    {% endfor %}
+                <br>
+                {% endfor %}
+                {% for field, error in form.errors.items %}
+                    {% if field == '__all__' %}
+                    <div class="alert-message" role="alert">{{ error|striptags }}</div>
+                    {% endif %}
+                {% endfor %}
+                
+                        {% if request.resolver_match.url_name == 'signup' %}
+                            <br>
+                            <button class="btn btn-primary">회원 가입</button>
+                        {% else %}
+                            <br>
+                            <button class="btn btn-primary">로그인</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </main>
+            <style>
+main{
+    border: 1px solid #DBDBDB;
+    border-radius: 10px;
+}
+form label{
+    width: 100%;
+}
+form button{
+    width: 100%;
+}
+form input{
+    width: 100%;
+}
+
+.form-signin {
+    max-width: 330px;
+    margin-top: 100px;
+    padding: 20px;
+  }
+  
+    .helptext{
+        font-size: 10px;
+        color: rgb(0, 0, 0, 0.5);
+    }
+    form label{
+        width: 100%;
+        margin-top: 10px;
+    }
+    ul, li {
+        list-style-type:none;
+    }
+    .alert-message{
+        padding-left: 5px;
+        color: red; 
+        font-size: 10px;
+    }
+            </style>
+        {% endblock %}
